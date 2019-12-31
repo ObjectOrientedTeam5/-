@@ -22,9 +22,9 @@ public class MainView extends JFrame{
 	Controller buttonListener = new Controller();
 	
 	// 데이터 베이스 관련 변수들
-	static String buildingResult = "데이터 베이스 건물 결과 값";
-	static String roomResult = "데이터 베이스 스터디룸 결과 값";
-	static String peopleResult = "20";
+	static String building = "데이터 베이스 건물 결과 값";
+	static String roomNumber = "데이터 베이스 스터디룸 결과 값";
+	static String maxPeople = "20";
 	
 	static int dataBaseRow = 3;
 	static int dataBaseCol = 3;
@@ -65,7 +65,7 @@ public class MainView extends JFrame{
 	// 네번째 패널
 	static JButton findButton = new JButton("조회");
 	static JButton reservationButton = new JButton("예약");
-	static JButton cancelButton = new JButton("취소");
+	static JButton cancelButton = new JButton("예약 취소");
 	JPanel buttonPanel = new JPanel();
 	
 	public MainView() {
@@ -160,11 +160,7 @@ public class MainView extends JFrame{
 		frame.add(buttonPanel, BorderLayout.SOUTH);
 		
 	}
-	public static void main(String[] args) {
-		 
-		MainView main = new MainView();
-		   
-	}
+	
 
 	
 

@@ -1,4 +1,9 @@
-public class BookedDTO extends DB_DTO{
+package database;
+
+import java.sql.Date;
+
+public class DB_DTO {
+    //모든정보를 담을때 쓰는 클래스
     private String studentID;
     private String studentName;
     private int isProject;//true =1, false = 0
@@ -6,23 +11,34 @@ public class BookedDTO extends DB_DTO{
     private String date;
     private String building;
     private String roomNumber;
+    DB_DTO(){
 
-    @Override
+    }
+    DB_DTO(String building, String roomNumber, String date, int isProject, int maxPeople, String studentID, String studentName){
+        this.building = building;
+        this.roomNumber = roomNumber;
+        this.date=date;
+        this.isProject = isProject;
+        this.maxPeople= maxPeople;
+        this.studentID = studentID;
+        this.studentName=studentName;
+    }
+
     public String getBuilding() {
         return building;
     }
 
-    @Override
+
     public void setBuilding(String building) {
         this.building = building;
     }
 
-    @Override
+
     public String getRoomNumber() {
         return roomNumber;
     }
 
-    @Override
+
     public void setRoomNumber(String roomNumber) {
         this.roomNumber = roomNumber;
     }
@@ -43,22 +59,20 @@ public class BookedDTO extends DB_DTO{
         this.studentName = studentName;
     }
 
-    @Override
+
     public int getIsProject() {
         return isProject;
     }
 
-    @Override
     public void setIsProject(int isProject) {
         this.isProject = isProject;
     }
 
-    @Override
     public int getMaxPeople() {
         return maxPeople;
     }
 
-    @Override
+
     public void setMaxPeople(int maxPeople) {
         this.maxPeople = maxPeople;
     }

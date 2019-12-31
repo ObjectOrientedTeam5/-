@@ -1,3 +1,5 @@
+package database;
+
 public class BookAvailableDTO extends  DB_DTO {
     //이 클래스는 예약가능한 데이터를 가져올때 사용하는 클래스
     private String building;

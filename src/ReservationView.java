@@ -13,25 +13,19 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 public class ReservationView extends JFrame{
-	static int reservationDate;
-	static int reservationHour;
-	static String reservationRoom;
-	static String reservationPeople;
-	static boolean reservationProjecter;
+	static String reservationDate = "정보없음";
+	static String reservationRoom = "정보없음";
+	static String reservationPeople = "정보없음";
+	static String reservationProjecter = "정보없음";
+	static String studentName;
+	static String studentNumber;
+	
 	
 	static JFrame frame = new JFrame();
 	
 	JLabel titleLabel = new JLabel("스터디룸 예약");
 	JPanel titlePanel = new JPanel();
-	
-	JLabel userNameLabel = new JLabel("이름");
-	JTextField userNameField = new JTextField();
-	JLabel userNumberLabel = new JLabel("학번");
-	JTextField userNumberField = new JTextField();
-	
-	static JButton userCheckButton = new JButton("사용자 조회");
-	
-	JPanel subPanel = new JPanel();
+
 	
 	
 	
@@ -40,7 +34,7 @@ public class ReservationView extends JFrame{
 	
 	static JButton findButton = new JButton("조회");
 	static JButton reservationButton = new JButton("예약");
-	static JButton cancelButton = new JButton("취소");
+	static JButton cancelButton = new JButton("예약 취소");
 	JPanel buttonPanel = new JPanel();
 	
 	Controller buttonListener = new Controller();
@@ -61,24 +55,9 @@ public class ReservationView extends JFrame{
 	
 	public void startUI() {
 		
-		titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
 		titleLabel.setFont(new Font("돋움", Font.PLAIN, 30));
-		titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 150, 0, 0));
-		titlePanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 		titlePanel.add(titleLabel);
-		
-		
-		userNameField.setPreferredSize(new Dimension(150,30));
-		userNumberField.setPreferredSize(new Dimension(150,30));
-		
-		subPanel.add(userNameLabel);
-		subPanel.add(userNameField);
-		subPanel.add(userNumberLabel);
-		subPanel.add(userNumberField);
-		subPanel.add(userCheckButton);
-		
-		
-		titlePanel.add(subPanel);
+
 		textAreaSetting();
 		
 		buttonPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
@@ -89,8 +68,6 @@ public class ReservationView extends JFrame{
 		findButton.addActionListener(buttonListener);
 		reservationButton.addActionListener(buttonListener);
 		cancelButton.addActionListener(buttonListener);
-		
-		
 		frame.add(titlePanel, BorderLayout.NORTH);
 		frame.add(textAreaPanel, BorderLayout.CENTER);
 		frame.add(buttonPanel, BorderLayout.SOUTH);
@@ -100,10 +77,12 @@ public class ReservationView extends JFrame{
 	}
 	
 	public static void textAreaSetting() {
+		
 		textArea.setPreferredSize(new Dimension(800,500));
 		textArea.setFont(new Font("돋움", Font.PLAIN, 20));
+		
 		textArea.setText("<예약정보>" + "\n" + 
-						"예약한 날짜 : " + reservationDate + "일 " + reservationHour+ "시" + "\n" + 
+						"예약한 날짜 : " + reservationDate+ "\n" + 
 						"예약한 스터디룸 : " + reservationRoom + "\n" +
 						"사용가능 인원 수 : " + reservationPeople + "\n" +
 						"빔 프로젝터 유무 : " + reservationProjecter

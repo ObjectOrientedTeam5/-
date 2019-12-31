@@ -1,3 +1,5 @@
+package database;
+
 import java.sql.*;
 
 public class UserDAO {
@@ -40,7 +42,28 @@ public class UserDAO {
         }
 
     }
-    //로그인이 성공하면 true 아니면 false 반환
+    public boolean login(String studentID, String studentName){
+        connectDB();
+        System.out.println(studentID);
+        String sql = "select * from user where studentID = ? and studentName = ?";
+        try {
+            pstmt = conn.prepareStatement(sql);
+
+            pstmt.setString(1, studentID);
+            pstmt.setString(2, studentName);
+
+            resultSet = pstmt.executeQuery();
+            
+            if(resultSet.next()){
+                return true;
+            }
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    /*//로그인이 성공하면 true 아니면 false 반환
     public boolean login(String ID, String password){
         connectDB();
 
@@ -61,7 +84,7 @@ public class UserDAO {
             e.printStackTrace();
         }
         return false;
-    }
+    }*/
     //DB에 커넥트
     void connectDB(){
         try {
@@ -69,7 +92,7 @@ public class UserDAO {
             //Class.forName(jdbcDriver);
 
             //데이터베이스 연결
-            conn = DriverManager.getConnection(jdbcUrl, "root", "1234");
+            conn = DriverManager.getConnection(jdbcUrl, "root", "choi1204");
             //System.out.println("DB에 연결되었습니다!");
         } catch (SQLException e) {
             e.printStackTrace();

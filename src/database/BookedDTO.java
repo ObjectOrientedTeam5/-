@@ -1,7 +1,6 @@
-import java.sql.Date;
+package database;
 
-public class DB_DTO {
-    //모든정보를 담을때 쓰는 클래스
+public class BookedDTO extends DB_DTO{
     private String studentID;
     private String studentName;
     private int isProject;//true =1, false = 0
@@ -9,7 +8,18 @@ public class DB_DTO {
     private String date;
     private String building;
     private String roomNumber;
+    BookedDTO(){
 
+    }
+    BookedDTO(String building, String roomNumber, String date, int isProject, int maxPeople, String studentID, String studentName){
+        this.building = building;
+        this.roomNumber = roomNumber;
+        this.date=date;
+        this.isProject = isProject;
+        this.maxPeople= maxPeople;
+        this.studentID = studentID;
+        this.studentName=studentName;
+    }
 
     public String getBuilding() {
         return building;

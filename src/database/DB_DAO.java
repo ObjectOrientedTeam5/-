@@ -1,5 +1,9 @@
+package database;
+
 import java.sql.*;
 import java.util.ArrayList;
+
+import Server.Message;
 
 
 public class DB_DAO{
@@ -11,11 +15,11 @@ public class DB_DAO{
     ResultSet resultSet;
 
     //mData는 현재 예약된 모든 목록을 저장하는 ArrayList, getAll메소드에 의해 저장
-    ArrayList<DB_DTO> mData = new ArrayList<>();
+    ArrayList<BookedDTO> mData = new ArrayList<>();
     //bookedListByClient는 해당 사용자가 예약한 목록을 저장하는 ArrayList, getBookedListByClient메소드에 의해 저장
-    ArrayList<DB_DTO> bookedListByClient = new ArrayList<>();
+    ArrayList<BookedDTO> bookedListByClient = new ArrayList<>();
     //bookAvailableList는 예약 가능한 목록을 저장하는 ArrayList, getBookAvailableList메소드에 의해 저장
-    ArrayList<DB_DTO> bookAvailableList = new ArrayList<>();
+    ArrayList<BookAvailableDTO> bookAvailableList = new ArrayList<>();
 
 
     String sql;
@@ -25,7 +29,7 @@ public class DB_DAO{
     void clearBookedListByClient(){bookedListByClient.clear();}
     void clearBookAvailableList(){bookAvailableList.clear();}
 
-    DB_DAO(){ }
+    
 
     //LostAndFound 테이블 구조
     //name whereFound registeredTime comment
@@ -51,26 +55,6 @@ public class DB_DAO{
         }
 
     }
-
-    //분실물 삭제 메서드
-    //파라미터로 registeredTime을 넣으면 된다.
-    public void deleteLost(String time){
-        connectDB();
-        String sql = "delete from lostandfound where registeredTime = date_format(?, '%Y-%m-%d %H:%i:%s')";
-        try {
-            pstmt = conn.prepareStatement(sql);
-
-            pstmt.setString(1, time);
-            pstmt.executeUpdate();
-            closeDB();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            closeDB();
-        }
-
-    }
-
-
 
     //현재 시간과 예약된 시간을 비교하여 2시간이 넘었다면 예약 목록에서 삭제한다.
     //db연결할때마다 실행되므로 따로 실행할필요없음.
@@ -98,9 +82,9 @@ public class DB_DAO{
 
             resultSet = pstmt.executeQuery();
             clearBookedListByClient();
-            DB_DTO tmp;
+            BookedDTO tmp;
             while(resultSet.next()){
-                tmp=new DB_DTO();
+                tmp=new BookedDTO();
                 tmp.setBuilding(resultSet.getString("building"));
                 tmp.setStudentName(resultSet.getString("studentName"));
                 tmp.setStudentID(resultSet.getString("studentID"));
@@ -121,6 +105,7 @@ public class DB_DAO{
             e.printStackTrace();
         }
     }
+    
     //현재 예약된 모든 목록을 보여준다.
     //mData 리스트에 저장된다.
     //이 메소드는 관리자용
@@ -132,9 +117,9 @@ public class DB_DAO{
             pstmt = conn.prepareStatement(sql);
             resultSet = pstmt.executeQuery();
             clearmData();
-            DB_DTO tmp;
+            BookedDTO tmp;
             while(resultSet.next()) {
-                tmp = new DB_DTO();
+                tmp = new BookedDTO();
                 tmp.setBuilding(resultSet.getString("building"));
                 tmp.setRoomNumber(resultSet.getString("roomNumber"));
                 tmp.setIsProject(resultSet.getInt("isProject"));
@@ -180,7 +165,7 @@ and B.isProject = ? and B.maxPeople = ?
 
             resultSet = pstmt.executeQuery();
             clearBookAvailableList();
-            DB_DTO tmp;
+            BookAvailableDTO tmp;
             while(resultSet.next()){
                 tmp = new BookAvailableDTO();
                 tmp.setBuilding(resultSet.getString("building"));
@@ -199,24 +184,25 @@ and B.isProject = ? and B.maxPeople = ?
         }
 
     }
-    //DB_DTO클래스에 정보를 저장한뒤 파라미터로 넘겨주면 해당 정보를 예약함
+    
+    //BookedDTO클래스에 정보를 저장한뒤 파라미터로 넘겨주면 해당 정보를 예약함
     //예약이 되었으면 true 아니면 false반환
-    public boolean book(DB_DTO tmp){
+    public boolean book(Message msg){
         connectDB();
-        sql = "insert into bookinglist(building, roomNumber, studentID, studentName, isProject, maxPeople, date) values(?,?,?,?,?,?,?,?)";
+        sql = "insert into bookinglist(building, roomNumber, studentID, studentName, isProject, maxPeople, date) values(?,?,?,?,?,?,?)";
 
         try {
             pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, tmp.getBuilding());
-            pstmt.setString(2, tmp.getRoomNumber());
-            pstmt.setString(3, tmp.getStudentID());
-            pstmt.setString(4, tmp.getStudentName());
-            pstmt.setInt(5, tmp.getIsProject());
-            pstmt.setInt(6, tmp.getMaxPeople());
-            pstmt.setString(7, tmp.getDate());
+            pstmt.setString(1, msg.getBuilding());
+            pstmt.setString(2, msg.getRoomNum());
+            pstmt.setString(3, msg.getStudentId());
+            pstmt.setString(4, msg.getName());
+            pstmt.setInt(5, Integer.parseInt(msg.getEquipment()));
+            pstmt.setInt(6, Integer.parseInt(msg.getCapacity()));
+            pstmt.setString(7, msg.getDate());
 
             pstmt.executeUpdate();
-            System.out.println(tmp+"예약에 성공했습니다.");
+            System.out.println(msg+"예약에 성공했습니다.");
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -228,22 +214,33 @@ and B.isProject = ? and B.maxPeople = ?
     //예약을 취소하는 메서드
     //building, roomnumber, studentid, studentname이 모두 일치하면 예약취소 및 데이터 삭제
     //하나라도 데이터가 맞지않을시 에러
-    public void bookingCancel(String building, String roomNumber, String studentID, String studentName){
+    //성공하면 true반환, 예약정보가 없어서 취소하지 못하거나 에러발생시 false 반환
+    public boolean bookingCancel(String building, String roomNumber, String studentID, String studentName, String date){
         connectDB();
-        sql = "delete from bookinglist where building = ? and roomNumber = ? and studentID = ? and studentName = ?";
+        sql = "delete from bookinglist where building = ? and roomNumber = ? and studentID = ? and studentName = ? and date = ?";
 
         try {
             pstmt= conn.prepareStatement(sql);
 
-            pstmt.setString(1, "building");
-            pstmt.setString(2, "roomNumber");
-            pstmt.setString(3, "studentID");
-            pstmt.setString(4, "studentName");
-            pstmt.executeUpdate();
-            System.out.println("예약이 취소되었습니다.");
+            pstmt.setString(1, building);
+            pstmt.setString(2, roomNumber);
+            pstmt.setString(3, studentID);
+            pstmt.setString(4, studentName);
+            pstmt.setString(5, date);
+            int x;
+            if((x = pstmt.executeUpdate()) == 1){
+                System.out.println("예약 취소 성공!");
+                return true;
+            }else{
+                System.out.println("해당하는 예약정보가 없습니다.");
+                return false;
+            }
+
+
         } catch (Exception e) {
             System.out.println("예약 취소가 실패했습니다.");
             e.printStackTrace();
+            return false;
         }
     }
     //DB에 커넥트
@@ -277,27 +274,5 @@ and B.isProject = ? and B.maxPeople = ?
             e.printStackTrace();
         }
     }
-    //밑에꺼 쓰지마세요
-    //////////////////////////////////////////////////
-    //Deprecated
-    //예약 테이블에서 2시간이 경과한 예약목록을 삭제
-    //데몬 설정해야됨
-   /* @Override
-    public void run() {
-        connectDB();
-        while(true){
-            System.out.println("시작");
-            clear_mData();
-            getAll();
 
-            deleteData();
-
-            try {
-                //10분 단위로 쓰레드 실행
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }*/
 }
