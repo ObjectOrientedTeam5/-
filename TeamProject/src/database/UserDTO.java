@@ -1,3 +1,5 @@
+package database;
+
 public class UserDTO {
     private String studentName;
     private String studentID;
