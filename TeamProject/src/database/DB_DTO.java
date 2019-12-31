@@ -1,3 +1,5 @@
+package database;
+
 import java.sql.Date;
 
 public class DB_DTO {
@@ -9,7 +11,18 @@ public class DB_DTO {
     private String date;
     private String building;
     private String roomNumber;
+    DB_DTO(){
 
+    }
+    DB_DTO(String building, String roomNumber, String date, int isProject, int maxPeople, String studentID, String studentName){
+        this.building = building;
+        this.roomNumber = roomNumber;
+        this.date=date;
+        this.isProject = isProject;
+        this.maxPeople= maxPeople;
+        this.studentID = studentID;
+        this.studentName=studentName;
+    }
 
     public String getBuilding() {
         return building;

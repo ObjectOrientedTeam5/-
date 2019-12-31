@@ -1,3 +1,5 @@
+package database;
+
 public class BookedDTO extends DB_DTO{
     private String studentID;
     private String studentName;
@@ -6,23 +8,34 @@ public class BookedDTO extends DB_DTO{
     private String date;
     private String building;
     private String roomNumber;
+    BookedDTO(){
 
-    @Override
+    }
+    BookedDTO(String building, String roomNumber, String date, int isProject, int maxPeople, String studentID, String studentName){
+        this.building = building;
+        this.roomNumber = roomNumber;
+        this.date=date;
+        this.isProject = isProject;
+        this.maxPeople= maxPeople;
+        this.studentID = studentID;
+        this.studentName=studentName;
+    }
+
     public String getBuilding() {
         return building;
     }
 
-    @Override
+
     public void setBuilding(String building) {
         this.building = building;
     }
 
-    @Override
+
     public String getRoomNumber() {
         return roomNumber;
     }
 
-    @Override
+
     public void setRoomNumber(String roomNumber) {
         this.roomNumber = roomNumber;
     }
@@ -43,22 +56,20 @@ public class BookedDTO extends DB_DTO{
         this.studentName = studentName;
     }
 
-    @Override
+
     public int getIsProject() {
         return isProject;
     }
 
-    @Override
     public void setIsProject(int isProject) {
         this.isProject = isProject;
     }
 
-    @Override
     public int getMaxPeople() {
         return maxPeople;
     }
 
-    @Override
+
     public void setMaxPeople(int maxPeople) {
         this.maxPeople = maxPeople;
     }

@@ -1,3 +1,5 @@
+package database;
+
 public class MyMain {
     public static void main(String[] args) {
         DB_DAO db = new DB_DAO();
@@ -11,7 +13,9 @@ public class MyMain {
 
         db.getAll();
 
-        db.getBookedByClient("100", "Kim");
+        db.getBookedByClient("12345", "Kim");
+
+        db.bookingCancel("A", "701", "12345", "Kim", "2019-12-31 19:22:33");
 
     }
 }
