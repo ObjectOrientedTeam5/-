@@ -77,7 +77,7 @@ public class DB_DAO{
     //현재 시간과 예약된 시간을 비교하여 2시간이 넘었다면 예약 목록에서 삭제한다.
     //db연결할때마다 실행되므로 따로 실행할필요없음.
     public void clearBookedList(){
-        String sql = "delete from bookinglist where date_add(date, interval 2 hour) < now()";
+        String sql = "delete from bookinglist where date_add(date, interval 1 hour) < now()";
         try {
             pstmt = conn.prepareStatement(sql);
             pstmt.executeUpdate();
