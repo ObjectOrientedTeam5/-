@@ -11,7 +11,10 @@ import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import database.BookAvailableDTO;
+import database.BookedDTO;
 import database.DB_DAO;
 import database.UserDAO;
 
@@ -75,6 +78,7 @@ public class BookingServer {
 		Message m = new Message();
 		// JSON 파서 초기화
 		Gson gson = new Gson(); // Gson - java 객체를 JSON 표현식으로 변환하는 API
+		Gson gsonBuilder = new GsonBuilder().create();
 
 		// 클라이언트와 입출력 처리를 담당할 스트림 선언
 		private BufferedReader inMsg = null;
@@ -87,7 +91,13 @@ public class BookingServer {
 		public void run() {
 			boolean status = true;
 			logger.info("BookingThread start...");
-
+			
+			Message m = new Message("11111111", "홍길동", "학술정보원", "s1", "5","1","2019-12-12 15:22:39", "lookUp", "");
+			String testmsgList;
+			testmsgList = gsonBuilder.toJson(lookUpEmptyRoom(m));// 반환값 ArrayList<Message>
+			MsgSendClient(testmsgList);
+			System.out.println(testmsgList);
+			
 			try {
 				inMsg = new BufferedReader(new InputStreamReader(s.getInputStream()));
 				outMsg = new PrintWriter(s.getOutputStream(), true);
@@ -103,10 +113,10 @@ public class BookingServer {
 					/* 파싱된 문자열 배열의 type 요소 값에 따라 처리 */
 					// 로그인 메시지일 때
 					if (m.getType().equals("login")) {
-						if(login(m))
+						if (login(m))
 							id = m.getStudentId();
 						MsgSendClient(gson.toJson(m));
-						
+
 					}
 					// 예약 시도
 					else if (m.getType().equals("try")) {
@@ -116,13 +126,15 @@ public class BookingServer {
 					// 예약 메시지일 때
 					else if (m.getType().equals("reservation")) {
 						makeReservation(m);
-						onReservationList.remove(m.getRoomNum());//예약 중 목록에서 제거
+						onReservationList.remove(m.getRoomNum());// 예약 중 목록에서 제거
 						MsgSendClient(gson.toJson(m));
 					}
 					// 예약 확인일 때- list로 반환
 					else if (m.getType().equals("check")) {
-						checkReservation(m);
-						// m 가공
+						String msgList;
+						msgList = gsonBuilder.toJson(checkReservation(m));// 반환값 ArrayList<Message>
+						MsgSendClient(msgList);
+						System.out.println(msgList);
 					}
 					// 예약 취소일 때
 					else if (m.getType().equals("cancle")) {
@@ -131,9 +143,10 @@ public class BookingServer {
 					}
 					// 조회할 때- list로 반환
 					else {
-						lookUpEmptyRoom(m);// Message[] msgArr 에 담아서 json array 보내기?
-						// m 가공
-						// json array 전송
+						String msgList;
+						msgList = gsonBuilder.toJson(lookUpEmptyRoom(m));// 반환값 ArrayList<Message>
+						MsgSendClient(msgList);
+						System.out.println(msgList);
 					}
 				}
 				// 루프를 벗어나면 클라이언트 연결이 종료되므로 스레드 인터럽트
@@ -167,7 +180,7 @@ public class BookingServer {
 		void MsgSendClient(String msg) {
 			this.outMsg.println(msg);
 		}
-		
+
 		// 로그인
 		boolean login(Message m) {
 			boolean result;
@@ -180,7 +193,7 @@ public class BookingServer {
 				return false;
 			}
 		}
-		
+
 		// 예약 중인지 체크
 		boolean isOnReservation(Message m) {
 			for (String room : onReservationList)
@@ -188,13 +201,13 @@ public class BookingServer {
 					return true;
 			return false;
 		}
-		
+
 		// 예약 중
 		void tryReservation(Message m) {// 처음 예약 버튼 클릭 시
 			if (isOnReservation(m)) {// 이미 예약 중이면
 				m.setMsg("already on a reservation");// 클라이언트 단에서 예약중이라는 메시지 보내야함
 			} else {
-				onReservationList.add(m.getRoomNum());//예약 중 목록에 추가
+				onReservationList.add(m.getRoomNum());// 예약 중 목록에 추가
 				m.setMsg("available");
 			}
 		}
@@ -208,26 +221,48 @@ public class BookingServer {
 		}
 
 		// db에서 이용가능한 스터디룸들 조회 - list로 반환
-		void lookUpEmptyRoom(Message m) {
-			DB_dao.getBookAvailableList(m.getDate(), Integer.parseInt(m.getCapacity()),
-					Integer.parseInt(m.getEquipment()));
-			// 여기서 리턴값 받아옴
-			// return arr
+		ArrayList<Message> lookUpEmptyRoom(Message m) {
+			ArrayList<BookAvailableDTO> dataList = new ArrayList<BookAvailableDTO>();
+			ArrayList<Message> msgList = new ArrayList<Message>();
+			
+			//조회 후 반환값 받음
+			dataList = DB_dao.getBookAvailableList(m.getDate(), Integer.parseInt(m.getCapacity()),
+					Integer.parseInt(m.getEquipment())); // ArrayList<BookAvailableDTO>
+			
+			//반환 값을 메시지에 담기
+			for (int i = 0; i < dataList.size(); i++) {
+				msgList.add(new Message("", "", dataList.get(i).getBuilding(), dataList.get(i).getRoomNumber(),
+						Integer.toString(dataList.get(i).getMaxPeople()),
+						Integer.toString(dataList.get(i).getIsProject()), "", "lookUp", ""));
+			}
+			return msgList;
 		}
 
 		// 학생 id 받아서 예약 조회 - list로 반환
-		void checkReservation(Message m) {
-			DB_dao.getBookedByClient(m.getStudentId(), m.getName());
-			// return 예약 arr
+		ArrayList<Message> checkReservation(Message m) {
+			ArrayList<BookedDTO> dataList = new ArrayList<BookedDTO>();
+			ArrayList<Message> msgList = new ArrayList<Message>();
+			
+			//조회 후 반환값 받음
+			dataList = DB_dao.getBookedByClient(m.getStudentId(), m.getName());// ArrayList<BookedDTO>
+			
+			//반환 값을 메시지에 담기
+			for (int i = 0; i < dataList.size(); i++) {
+				msgList.add(new Message("", "", dataList.get(i).getBuilding(), dataList.get(i).getRoomNumber(),
+						Integer.toString(dataList.get(i).getMaxPeople()),
+						"", dataList.get(i).getDate(), "check", ""));
+			}
+			return msgList;
 		}
 
 		// db의 예약 목록에서 제거
 		void cancleReservation(Message m) {
 			boolean isCancled;
-			isCancled = DB_dao.bookingCancel(m.getBuilding(), m.getRoomNum(), m.getStudentId(), m.getName(), m.getDate());
-			if(isCancled) //취소 성공
+			isCancled = DB_dao.bookingCancel(m.getBuilding(), m.getRoomNum(), m.getStudentId(), m.getName(),
+					m.getDate());
+			if (isCancled) // 취소 성공
 				m.setMsg("success");
-			else 
+			else
 				m.setMsg("failed");
 		}
 	}

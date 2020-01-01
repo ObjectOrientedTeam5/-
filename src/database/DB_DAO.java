@@ -29,33 +29,7 @@ public class DB_DAO{
     void clearBookedListByClient(){bookedListByClient.clear();}
     void clearBookAvailableList(){bookAvailableList.clear();}
 
-    
-
-    //LostAndFound 테이블 구조
-    //name whereFound registeredTime comment
-
-    //분실물 등록 메서드
-    //분실물의 이름, 찾은 장소, 분실물에대한 코멘트
-    public void registerLost(String name, String whereFound, String comment){
-        connectDB();
-
-        String sql = "insert into LostAndFound(name, whereFound, comment) values(?, ?, ?)";
-        try {
-            pstmt = conn.prepareStatement(sql);
-
-            pstmt.setString(1, name);
-            pstmt.setString(2, whereFound);
-            pstmt.setString(3, comment);
-
-            pstmt.executeUpdate();
-            closeDB();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            closeDB();
-        }
-
-    }
-
+   
     //현재 시간과 예약된 시간을 비교하여 2시간이 넘었다면 예약 목록에서 삭제한다.
     //db연결할때마다 실행되므로 따로 실행할필요없음.
     public void clearBookedList(){
@@ -71,7 +45,7 @@ public class DB_DAO{
     }
     //파라미터로 studentID, studentName을 넣으면 해당 학생이 예약한 목록을 반환한다.
     //목록은 bookedListByClient 리스트에 저장된다.
-    public void getBookedByClient(String studentID, String studentName){
+    public ArrayList<BookedDTO> getBookedByClient(String studentID, String studentName){
         connectDB();
         String sql = "select * from bookinglist where studentName =  ? and studentID = ?";
         try{
@@ -104,6 +78,7 @@ public class DB_DAO{
         } catch (SQLException e) {
             e.printStackTrace();
         }
+		return bookedListByClient;
     }
     
     //현재 예약된 모든 목록을 보여준다.
@@ -141,7 +116,7 @@ public class DB_DAO{
     //설정한 날짜및시간, maxPeople, isProject를 파라미터로 지정
     //설정된 날짜및시간, maxPeople, isProject에 예약가능한 목록 반환
     //데이터는 bookAvailableList 리스트에 저장된다.
-    public void getBookAvailableList(String date, int maxPeople, int isProject){
+    public ArrayList<BookAvailableDTO> getBookAvailableList(String date, int maxPeople, int isProject){
 /*
 select  B.building ,B.roomNumber, B.isProject, B.maxPeople
 from bookinglist A right join roomlist B on A.roomNumber = B.roomNumber and
@@ -178,11 +153,10 @@ and B.isProject = ? and B.maxPeople = ?
             System.out.println("## "+date+"에 예약가능한 목록 isProject = "+isProject+" maxPeople = "+maxPeople+" ##");
             System.out.println(bookAvailableList);
             System.out.println();
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
+        return bookAvailableList;
     }
     
     //BookedDTO클래스에 정보를 저장한뒤 파라미터로 넘겨주면 해당 정보를 예약함
@@ -250,7 +224,7 @@ and B.isProject = ? and B.maxPeople = ?
             //Class.forName(jdbcDriver);
 
             //데이터베이스 연결
-            conn = DriverManager.getConnection(jdbcUrl, "root", "1234");
+            conn = DriverManager.getConnection(jdbcUrl, "root", "choi1204");
             //System.out.println("DB에 연결되었습니다!");
             clearBookedList();
         } catch (SQLException e) {
