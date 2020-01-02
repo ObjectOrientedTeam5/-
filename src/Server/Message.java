@@ -37,6 +37,11 @@ public class Message {
 		this.msg = msg;
 	}
 
+	@Override
+	public String toString() {
+		return "roomNum : "+this.roomNum +" date : "+ this.date+" type : "+this.type+" msg : "+this.msg;
+	}
+	
 	//getter & setter
 	public String getStudentId() {
 		return studentId;

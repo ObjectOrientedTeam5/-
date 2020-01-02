@@ -85,16 +85,20 @@ class BookingThread extends Thread {
 				if (m.getType().equals("login")) {
 					if (login(m))
 						id = m.getStudentId(); // 해당 스레드의 id 설정
+					if(m.getStudentId().equals("00000000") && m.getMsg().equals("true")) {
+						m.setType("managerlogin");
+					}
 					MsgSendClient(gson.toJson(m)); // 클라이언트의 컨트롤러로 정보 전송
 					System.out.println("로그인" + m);
 				}
+
 				// 예약 시도
 				else if (m.getType().equals("try")) {
 					System.out.println("예약 시도");
 					tryReservation(m); // '예약 중' 리스트에 해당 스터디룸에 대한 정보를 입력하여 다른 사용자가 예약시도하지 못하게 함.
 					MsgSendClient(gson.toJson(m));
 					System.out.println("------예약 중 리스트에 들어있는 목록------");
-					for (String room : onReservationList) 
+					for (String room : onReservationList)
 						System.out.println(room);
 					System.out.println("-------------------------------");
 				}
@@ -102,37 +106,37 @@ class BookingThread extends Thread {
 				else if (m.getType().equals("reservation")) {
 					System.out.println("예약 확정");
 					System.out.println("------예약 중 리스트에 들어있는 목록------");
-					for (String room : onReservationList) 
+					for (String room : onReservationList)
 						System.out.println(room);
 					System.out.println("-------------------------------");
 					System.out.println("예약 할 룸 정보");
 					System.out.println(m);
-					
+
 					makeReservation(m);// 예약정보를 DB에 저장하고
-					
+
 					System.out.println("예약중 리스트에서 제거할 룸정보");
 					System.out.println(m.getRoomNum() + " " + m.getDate());
-					
+
 					onReservationList.remove(m.getRoomNum() + " " + m.getDate());// '예약 중' 리스트에 해당 스터디룸에 대한 정보를 제거.
-					
+
 					System.out.println("예약 중 리스트에 들어있는 목록");
-					for (String room : onReservationList) 
+					for (String room : onReservationList)
 						System.out.println(room);
-					
+
 					MsgSendClient(gson.toJson(m));
-					
+
 				}
 				// 예약 확인일 때- list로 반환
 				else if (m.getType().equals("check")) {
-					System.out.println("예약확인: "+m+m.getStudentId());
+					System.out.println("예약확인: " + m + m.getStudentId());
 					String msgList;
 					msgList = gsonBuilder.toJson(checkReservation(m));// 반환값 ArrayList<Message>
 					MsgSendClient(msgList);
-					System.out.println("서버에서 보냅니다:" +msgList);
+					System.out.println("서버에서 보냅니다:" + msgList);
 				}
 				// 예약 취소일 때
 				else if (m.getType().equals("cancel")) {
-					System.out.println("예약취소: "+m+m.getStudentId());
+					System.out.println("예약취소: " + m + m.getStudentId());
 					cancelReservation(m);
 					MsgSendClient(gson.toJson(m));
 				}
@@ -147,21 +151,20 @@ class BookingThread extends Thread {
 					String msgList;
 					msgList = gsonBuilder.toJson(ManagerLookUp(m));// 반환값 ArrayList<Message>
 					MsgSendClient(msgList);// json화 한 것을 전송
-					System.out.println("관리자모드: "+msgList);
+					System.out.println("관리자모드: " + msgList);
 				}
 				// 종료했을 경우
 				else if (m.getType().equals("exit")) {
 					bookingThreads.remove(this);
 					// 해당 클라이언트 스레드 종료로 status를 false로 설정
 					status = false;
-				} 
-				//예약페이지에서 예약하지 않고 나올 경우
-				else if(m.getType().equals("bookingCancel")) {
+				}
+				// 예약페이지에서 예약하지 않고 나올 경우
+				else if (m.getType().equals("bookingCancel")) {
 					System.out.println("예약페이지에서 예약하지 않고 나올 경우");
 					System.out.println(m);
 					onReservationList.remove(m.getRoomNum() + " " + m.getDate());// '예약 중' 리스트에 해당 스터디룸에 대한 정보를 제거.
-				}
-				else {
+				} else {
 					System.out.println("메시지 예외사항 발생");
 				}
 			}
@@ -173,7 +176,7 @@ class BookingThread extends Thread {
 			bookingThreads.remove(this);
 			logger.info("[ChatThread]run() IOException 발생");
 			e.printStackTrace();
-		}catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
@@ -242,7 +245,7 @@ class BookingThread extends Thread {
 	ArrayList<Message> lookUpEmptyRoom(Message m) {
 		ArrayList<BookAvailableDTO> dataList = new ArrayList<BookAvailableDTO>();// db에서 반환받을 데이터
 		ArrayList<Message> msgList = new ArrayList<Message>();// Message타입으로 전환하기 위함
-		
+
 		// 조회 후 반환값 받음
 		dataList = DB_dao.getBookAvailableList(m.getDate(), Integer.parseInt(m.getCapacity()),
 				Integer.parseInt(m.getEquipment())); // ArrayList<BookAvailableDTO>

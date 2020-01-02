@@ -29,12 +29,9 @@ public class ReservationView extends JFrame {
 	static JTextArea textArea = new JTextArea();
 	static JPanel textAreaPanel = new JPanel();
 
-	static JButton findButton = new JButton("조회");
+	static JButton backButton = new JButton("뒤로가기");
 	static JButton reservationButton = new JButton("예약");
-	static JButton cancelButton = new JButton("예약 취소");
 	JPanel buttonPanel = new JPanel();
-
-	// Controller buttonListener = new Controller();
 
 	public ReservationView() {
 		setFrame();
@@ -57,13 +54,9 @@ public class ReservationView extends JFrame {
 		textAreaSetting();
 
 		buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		buttonPanel.add(findButton);
+		buttonPanel.add(backButton);
 		buttonPanel.add(reservationButton);
-		buttonPanel.add(cancelButton);
 
-		// findButton.addActionListener(buttonListener);
-		// reservationButton.addActionListener(buttonListener);
-		// cancelButton.addActionListener(buttonListener);
 		frame.add(titlePanel, BorderLayout.NORTH);
 		frame.add(textAreaPanel, BorderLayout.CENTER);
 		frame.add(buttonPanel, BorderLayout.SOUTH);
@@ -84,9 +77,8 @@ public class ReservationView extends JFrame {
 	}
 
 	public void addButtonActionListener(ActionListener listener) {
-		findButton.addActionListener(listener);
+		backButton.addActionListener(listener);
 		reservationButton.addActionListener(listener);
-		cancelButton.addActionListener(listener);
 	}
 
 }

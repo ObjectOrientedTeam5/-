@@ -8,18 +8,18 @@ import javax.swing.table.DefaultTableModel;
 
 public class ManagerView extends JFrame {
 
-	static String building = "ë°ì´í„° ë² ì´ìŠ¤ ê±´ë¬¼ ê²°ê³¼ ê°’";
-	static String roomNumber = "ë°ì´í„° ë² ì´ìŠ¤ ìŠ¤í„°ë””ë£¸ ê²°ê³¼ ê°’";
-	static String studentName = "ì£¼ì´ì‹";
+	static String building = "µ¥ÀÌÅÍ º£ÀÌ½º °Ç¹° °á°ú °ª";
+	static String roomNumber = "µ¥ÀÌÅÍ º£ÀÌ½º ½ºÅÍµğ·ë °á°ú °ª";
+	static String studentName = "ÁÖÀÌ½Ä";
 	static String studentNumber = "16011094";
 
 	// Controller buttonListener = new Controller();
 
-	JLabel titleLabel = new JLabel("ê´€ë¦¬ììš© ìŠ¤í„°ë””ë£¸ ì¡°íšŒ");
+	JLabel titleLabel = new JLabel("°ü¸®ÀÚ¿ë ½ºÅÍµğ·ë Á¶È¸");
 	JPanel titlePanel = new JPanel();
 
-	static String[] header = { "ê±´ë¬¼ëª…", "ìŠ¤í„°ë”” ë£¸ ëª…", "ì‚¬ìš©ì ì´ë¦„", "ì‚¬ìš©ì í•™ë²ˆ" };
-	static String[][] data = new String[20][3];
+	static String[] header = { "°Ç¹°¸í", "½ºÅÍµğ ·ë ¸í", "»ç¿ëÀÚ ÀÌ¸§", "»ç¿ëÀÚ ÇĞ¹ø", "»ç¿ë½Ã°£" };
+	static String[][] data = new String[50][4];
 	static DefaultTableModel mod = new DefaultTableModel(data, header) {
 		public boolean isCellEditable(int rowIndex, int mColIndex) {
 			return false;
@@ -30,7 +30,7 @@ public class ManagerView extends JFrame {
 	JScrollPane tablePanel = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 			JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-	static JButton findButton = new JButton("ì¡°íšŒ");
+	static JButton findButton = new JButton("Á¶È¸");
 	JPanel buttonPanel = new JPanel();
 
 	public ManagerView() {
@@ -42,22 +42,22 @@ public class ManagerView extends JFrame {
 
 	public void setFrame() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setTitle("í†µí•© ìŠ¤í„°ë””ë£¸ ì˜ˆì•½ ì‹œìŠ¤í…œ");
+		setTitle("ÅëÇÕ ½ºÅÍµğ·ë ¿¹¾à ½Ã½ºÅÛ");
 		setSize(1000, 700);
 		setVisible(true);
 	}
 
 	public void startUI() {
 
-		titleLabel.setFont(new Font("ë‹ì›€", Font.PLAIN, 30));
+		titleLabel.setFont(new Font("µ¸¿ò", Font.PLAIN, 30));
 		titlePanel.add(titleLabel);
 
 		table.setRowHeight(25);
 		tablePanel.setBorder(BorderFactory.createEmptyBorder(0, 30, 0, 30));
 		tablePanel.setPreferredSize(new Dimension(1000, 400));
-		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // í…Œì´ë¸”ì— í•œ í–‰ë§Œ ì„ íƒë˜ê²Œ ì„¤ì •
-		table.getTableHeader().setReorderingAllowed(false); // í…Œì´ë¸” í—¤ë” ì´ë™ë¶ˆê°€
-		table.getTableHeader().setResizingAllowed(false); // í…Œì´ë¸” í—¤ë” í¬ê¸° ì¡°ì • ë¶ˆê°€
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // Å×ÀÌºí¿¡ ÇÑ Çà¸¸ ¼±ÅÃµÇ°Ô ¼³Á¤
+		table.getTableHeader().setReorderingAllowed(false); // Å×ÀÌºí Çì´õ ÀÌµ¿ºÒ°¡
+		table.getTableHeader().setResizingAllowed(false); // Å×ÀÌºí Çì´õ Å©±â Á¶Á¤ ºÒ°¡
 
 		buttonPanel.add(findButton);
 		// findButton.addActionListener(buttonListener);

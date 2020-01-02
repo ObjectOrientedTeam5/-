@@ -18,15 +18,13 @@ public class CancelView extends JFrame {
 	static int dataBaseRow = 3;
 	static int dataBaseCol = 3;
 
-	// Controller buttonListener = new Controller();
-
 	static JFrame frame = new JFrame();
 
 	JLabel titleLabel = new JLabel("스터디룸 예약 취소");
 	JPanel titlePanel = new JPanel();
 
 	static String[] header = { "건물명", "스터디 룸 명", "사용가능 인원 수", "예약시간" };
-	static String[][] data = new String[20][3];
+	static String[][] data = new String[50][3];
 	static DefaultTableModel mod = new DefaultTableModel(data, header) {
 		public boolean isCellEditable(int rowIndex, int mColIndex) {
 			return false;
@@ -37,8 +35,7 @@ public class CancelView extends JFrame {
 	JScrollPane tablePanel = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 			JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-	static JButton findButton = new JButton("조회");
-	static JButton reservationButton = new JButton("예약");
+	static JButton backButton = new JButton("뒤로가기");
 	static JButton cancelButton = new JButton("예약 취소");
 	JPanel buttonPanel = new JPanel();
 
@@ -67,13 +64,8 @@ public class CancelView extends JFrame {
 		table.getTableHeader().setResizingAllowed(false); // 테이블 헤더 크기 조정 불가
 
 		buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		buttonPanel.add(findButton);
-		buttonPanel.add(reservationButton);
+		buttonPanel.add(backButton);
 		buttonPanel.add(cancelButton);
-
-		// findButton.addActionListener(buttonListener);
-		// reservationButton.addActionListener(buttonListener);
-		// cancelButton.addActionListener(buttonListener);
 
 		frame.add(titlePanel, BorderLayout.NORTH);
 		frame.add(tablePanel, BorderLayout.CENTER);
@@ -85,8 +77,7 @@ public class CancelView extends JFrame {
 	}
 
 	public void addButtonActionListener(ActionListener listener) {
-		findButton.addActionListener(listener);
-		reservationButton.addActionListener(listener);
+		backButton.addActionListener(listener);
 		cancelButton.addActionListener(listener);
 
 	}

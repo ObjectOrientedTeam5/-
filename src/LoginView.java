@@ -7,8 +7,6 @@ import javax.swing.*;
 
 public class LoginView extends JFrame {
 
-	// Controller buttonListener = new Controller();
-
 	static JFrame frame = new JFrame();
 
 	JLabel titleLabel = new JLabel("통합 스터디룸 예약 시스템 로그인");
@@ -48,8 +46,6 @@ public class LoginView extends JFrame {
 		loginPanel.add(numberField);
 
 		loginPanel.add(loginButton);
-		// loginButton.addActionListener(buttonListener);
-
 		frame.add(titlePanel, BorderLayout.NORTH);
 		frame.add(loginPanel, BorderLayout.CENTER);
 
@@ -60,11 +56,5 @@ public class LoginView extends JFrame {
 
 	public void addButtonActionListener(ActionListener listener) {
 		loginButton.addActionListener(listener);
-	}
-
-	public static void main(String[] args) {
-
-		// LoginView login = new LoginView();
-
 	}
 }

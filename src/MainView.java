@@ -13,10 +13,11 @@ public class MainView extends JFrame {
 	static JFrame frame = new JFrame();
 
 	DecimalFormat df = new DecimalFormat("00");
-	Calendar currentCalendar = Calendar.getInstance();
+	static Calendar currentCalendar = Calendar.getInstance();
 
 	int lastDay = Integer.parseInt(df.format(currentCalendar.getActualMaximum(Calendar.DAY_OF_MONTH))); // 이번달의 마지막 날을
-																										// 가져옴
+	static int currentYear = currentCalendar.get(currentCalendar.YEAR);
+	static int currentMonth = currentCalendar.get(currentCalendar.MONTH + 1); // 가져옴
 	int currentDate = currentCalendar.get(currentCalendar.DATE); // 현재 날짜를 가져옴
 
 	// Controller buttonListener = new Controller();
@@ -53,7 +54,7 @@ public class MainView extends JFrame {
 
 	// 세번째 패널
 	static String[] header = { "건물명", "스터디 룸 명", "사용가능 인원 수" };
-	static String[][] data = new String[20][2];
+	static String[][] data = new String[50][2];
 	static DefaultTableModel mod = new DefaultTableModel(data, header) {
 		public boolean isCellEditable(int rowIndex, int mColIndex) {
 			return false;
@@ -67,6 +68,7 @@ public class MainView extends JFrame {
 	static JButton findButton = new JButton("조회");
 	static JButton reservationButton = new JButton("예약");
 	static JButton cancelButton = new JButton("예약 취소");
+	static JButton exitButton = new JButton("로그아웃");
 	JPanel buttonPanel = new JPanel();
 
 	public MainView() {
@@ -152,6 +154,7 @@ public class MainView extends JFrame {
 		buttonPanel.add(findButton);
 		buttonPanel.add(reservationButton);
 		buttonPanel.add(cancelButton);
+		buttonPanel.add(exitButton);
 
 	}
 
@@ -166,6 +169,7 @@ public class MainView extends JFrame {
 		findButton.addActionListener(listener);
 		reservationButton.addActionListener(listener);
 		cancelButton.addActionListener(listener);
+		exitButton.addActionListener(listener);
 	}
 
 }

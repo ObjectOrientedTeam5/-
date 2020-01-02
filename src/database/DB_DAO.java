@@ -163,6 +163,23 @@ and B.isProject = ? and B.maxPeople = ?
     //예약이 되었으면 true 아니면 false반환
     public boolean book(Message msg){
         connectDB();
+        sql = "select * from bookinglist where building = ? and roomNumber = ? and date = ?";
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, msg.getBuilding());
+            pstmt.setString(2, msg.getRoomNum());
+            pstmt.setString(3, msg.getDate());
+
+            resultSet = pstmt.executeQuery();
+            if(resultSet.next()) {
+            	System.out.println("중복된 데이터가 있어서 예약에 실패했습니다.");
+            	return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("예약 실패");
+        }
+        
         sql = "insert into bookinglist(building, roomNumber, studentID, studentName, isProject, maxPeople, date) values(?,?,?,?,?,?,?)";
 
         try {
@@ -183,7 +200,6 @@ and B.isProject = ? and B.maxPeople = ?
             System.out.println("예약 실패");
             return false;
         }
-
     }
     //예약을 취소하는 메서드
     //building, roomnumber, studentid, studentname이 모두 일치하면 예약취소 및 데이터 삭제
