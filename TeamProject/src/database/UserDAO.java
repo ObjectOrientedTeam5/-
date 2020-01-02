@@ -42,7 +42,54 @@ public class UserDAO {
         }
 
     }
-    //로그인이 성공하면 true 아니면 false 반환
+    public boolean login(String studentID, String studentName){
+        connectDB();
+
+        String sql = "select * from user where studentID = ? and studentName = ?";
+        try {
+            pstmt = conn.prepareStatement(sql);
+
+            pstmt.setString(1, studentID);
+            pstmt.setString(2, studentName);
+
+            resultSet = pstmt.executeQuery();
+
+            if(resultSet.next()){
+                return true;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    public String getAllUsers(){
+
+        connectDB();
+        StringBuilder sb = new StringBuilder();
+        String sql = "select json_object('studentName', studentname, 'studentID', studentID) as result from user";
+        try {
+            pstmt = conn.prepareStatement(sql);
+
+            resultSet = pstmt.executeQuery();
+            sb.append("\"allUser\":[\n");
+            ResultSet tmp;
+            while(resultSet.next()){
+                sb.append(resultSet.getString("result"));
+                if (resultSet.isLast()) {
+                    sb.append("\n");
+                } else {
+                    sb.append(",\n");
+                }
+            }
+            sb.append("]");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return sb.toString();
+    }
+    /*//로그인이 성공하면 true 아니면 false 반환
     public boolean login(String ID, String password){
         connectDB();
 
@@ -63,7 +110,7 @@ public class UserDAO {
             e.printStackTrace();
         }
         return false;
-    }
+    }*/
     //DB에 커넥트
     void connectDB(){
         try {

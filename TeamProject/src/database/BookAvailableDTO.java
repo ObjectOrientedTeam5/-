@@ -56,4 +56,5 @@ public class BookAvailableDTO extends  DB_DTO {
         sb.append(this.maxPeople+" ");
         return sb.toString();
     }
+
 }
